@@ -43,7 +43,7 @@
 				</div>
 				<div class="col">
 						<div class="card">	
-							<div class="card-header font-weight-bold">Weekly Graph</div>
+							<div class="card-header font-weight-bold">Last 7 Days Average Temperature Data</div>
 							<div class="card-body">
 								<canvas id="myChart" width="200" height="200"></canvas>
 							</div>
@@ -51,13 +51,16 @@
 				</div>
 		</div>
 	</div>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.bundle.js" 
+		integrity="sha512-zO8oeHCxetPn1Hd9PdDleg5Tw1bAaP0YmNvPY8CwcRyUk7d7/+nyElmFrB6f7vg4f7Fv4sui1mcep8RIEShczg==" 
+		crossorigin="anonymous"></script>
 		<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" 
 			integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" 
 			crossorigin="anonymous"></script>
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" 
 			integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" 
 			crossorigin="anonymous"></script>	
+			
 			
 		<script>
 		window.onload=loadDoc;
@@ -69,19 +72,29 @@
 			xhttp.onreadystatechange=function(){
 				if(this.readyState==4 && this.status==200){
 					var jsonObj=JSON.parse(this.responseText);
-					document.getElementById("temp").innerHTML=jsonObj.temperature;
-					document.getElementById("hum").innerHTML=jsonObj.humidity;
-					document.getElementById("press").innerHTML=jsonObj.pressure;
-					document.getElementById("soot").innerHTML=jsonObj.soot;
+					document.getElementById("temp").innerHTML=jsonObj.liveData.temperature;
+					document.getElementById("hum").innerHTML=jsonObj.liveData.humidity;
+					document.getElementById("press").innerHTML=jsonObj.liveData.pressure;
+					document.getElementById("soot").innerHTML=jsonObj.liveData.soot;
+					dateData=[];
+					tempData=[];
+					for(i=0;i<jsonObj.avgTempData.length;i++){
+						dateData.push(jsonObj.avgTempData[i]["t"]);
+						tempData.push(jsonObj.avgTempData[i]["avgTemp"]);
+						
+					}
+					console.log(dateData);
+					console.log(tempData);
 					
 					var ctx = document.getElementById('myChart').getContext('2d');
 					var myChart = new Chart(ctx, {
 					type: 'bar',
 					data: {
-						labels: ['Mon', 'Tue', 'Wed', 'Thurs', 'Fri', 'Sat','Sun'],
+						labels: dateData,
 						datasets: [{
 							label: 'Average Daily Temperature',
-							data: [13, 10, 12, 15, 9, 9,16],
+							data: tempData,
+						
 							backgroundColor: [
 								'rgba(255, 99, 132, 0.6)',
 								'rgba(54, 162, 235, 0.6)',
@@ -113,7 +126,10 @@
 						}
 					}
 				});
-						
+		
+			
+					
+					
 					}
 				}
 			
@@ -128,10 +144,10 @@
 			xhttp.onreadystatechange=function(){
 				if(this.readyState==4 && this.status==200){
 					var jsonObj=JSON.parse(this.responseText);
-					document.getElementById("temp").innerHTML=jsonObj.temperature;
-					document.getElementById("hum").innerHTML=jsonObj.humidity;
-					document.getElementById("press").innerHTML=jsonObj.pressure;
-					document.getElementById("soot").innerHTML=jsonObj.soot;
+					document.getElementById("temp").innerHTML=jsonObj.liveData.temperature;
+					document.getElementById("hum").innerHTML=jsonObj.liveData.humidity;
+					document.getElementById("press").innerHTML=jsonObj.liveData.pressure;
+					document.getElementById("soot").innerHTML=jsonObj.liveData.soot;
 					
 					
 				}
@@ -142,19 +158,7 @@
 			xhttp.send(null);
 		}
 		
-		
-		
-		<!-- var xhttp2=new XMLHttpRequest(); -->
-		<!-- xhttp2.open("GET","/ajax-info2",true); -->
-		<!-- var jsonObj2; -->
-		<!-- xhttp2.onreadystatechange=function(){ -->
-			<!-- if(this.readyState==4 && this.status==200){ -->
-				<!-- jsonObj2=JSON.parse(this.responseText); -->
-					
-					
-					
-			<!-- } -->
-		<!-- xhttp.send(null); -->
+	
 		
 	
 		</script>
