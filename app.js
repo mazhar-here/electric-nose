@@ -49,7 +49,7 @@ app.get("/ajax-info",(req,res)=>{
 			res.json(post);
 		});
 		
-	
+		 
 		//console.log("Connected...");
 });
 
@@ -61,4 +61,59 @@ app.get("/ajax-info2",(req,res)=>{
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
+  avgTemp2();
+  // avgTemp(new Date("2020-08-10"),new Date("2020-08-09"));
+  // for(index=1;index<7;index++){
+	  
+  // }
 });
+
+function avgTemp(startDate,endDate){
+	
+	return SensorData.find({ "dateCreated":{
+		$lt:startDate,
+		$gte:endDate
+		}},function(err,post){
+				avgTemperature=0;
+				counter=0;
+				post.forEach((item)=>{
+					counter+=(item["temperature"]);
+				});
+				avgTemperature=counter/post.length;
+				console.log(avgTemperature);
+				
+		});		
+}
+
+function avgTemp2(){
+	
+	SensorData.aggregate([
+		// {
+			// '$match': {
+			// // 'dateCreated': {$lt:new Date(),$gte:new Date("2020-08-15")}
+		// }},
+		{
+		'$group':
+			{
+				'_id': { $dateToString: { format: "%Y-%m-%d", date: "$dateCreated" } },
+				'avgTemp': {$avg: '$temperature'}
+			}
+
+		},
+		
+		{ $sort : { _id: -1 } },
+		{$limit:7}
+		],
+		
+		function(err,post){
+			// post.sort(function(a,b){
+				// return new Date(a["_id"])-new Date(b["_id"]);
+			// });
+			console.log(post);
+		})			
+	
+	}
+
+
+	
+
