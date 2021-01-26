@@ -23,7 +23,7 @@ app.use(express.static('public'));
 
 app.get('/', (req, res) => {
 	
-	// res.render('index');
+
 	res.sendFile(path.resolve(__dirname,"demo.html"));
 	
 });
@@ -36,21 +36,44 @@ app.get('/day-form', (req, res) => {
 
 app.get("/ajax-info",(req,res)=>{	
 
-	// res.json({
-			// temp:Math.floor(Math.random()*(15-10) + 10),
-			// press:Math.random()*(1.2-0.9) + 0.9,
-			// soot: Math.floor(Math.random()*(16-9) + 9),
-			// hum: Math.floor(Math.random()*(98-70) + 70),
-			
-		// });		
 	
-		SensorData.findOne({}, {}, { sort: { 'dateCreated' : -1 } }, function(err, post) {
-			console.log( post );
-			res.json(post);
-		});
+		SensorData.findOne({}, {}, { sort: { 'dateCreated' : -1 } }, function(err, post1) {
+	
+			SensorData.aggregate([
+			{	
+				'$group':
+					{
+						'_id': { $dateToString: { format: "%Y-%m-%d", date: "$dateCreated" } },
+						'avgTemp': {$avg: '$temperature'}
+					}
+
+				},
+				
+				{ $sort : { _id: -1 } },
+				{$limit:7},
+				{
+					'$project':
+					{
+						't':'$_id',
+						'_id':0,
+						'avgTemp':1
+					}
+				}
+				],
+				
+				function(err,post2){
+					result={
+							liveData:post1,
+							avgTempData:post2
+						}
+					console.log(result);
+					res.json(result);
+					
+				})		
+					
+				});
+			
 		
-		 
-		//console.log("Connected...");
 });
 
 app.get("/ajax-info2",(req,res)=>{
@@ -86,7 +109,7 @@ function avgWeeklyTemp(){
 		{
 			'$project':
 			{
-				't':'$_id',
+				't':Date.parse('$_id'),
 				'_id':0,
 				'avgTemp':1
 			}
