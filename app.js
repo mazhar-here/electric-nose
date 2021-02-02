@@ -62,14 +62,64 @@ app.get("/ajax-info",(req,res)=>{
 				],
 				
 				function(err,post2){
-					result={
-							liveData:post1,
-							avgTempData:post2
-						}
-					console.log(result);
-					res.json(result);
 					
-				})		
+					SensorData.aggregate([
+					{	
+						
+						'$match':{
+							"dateCreated" : { 
+								$lt: new Date(), 
+								$gte: new Date(new Date().setDate(new Date().getDate()-1))
+							
+						}}
+					},
+						
+						
+					{
+						'$group':
+							{
+								// '_id': {$hour:'$dateCreated' },
+								_id: {$dateToString: { format: "%Y-%m-%dT%H", date: "$dateCreated" } },
+								'avgTemp': {$avg: '$temperature'},
+							
+								
+							
+							}
+					}
+					,
+						
+						
+						{ '$sort' : { _id: -1 } },
+						
+						// {
+							// '$project':
+							// {
+								// '_id':'$dateCreated',
+								// 'avgTemp':1
+							// }
+						// }
+						],
+						
+						function(err,post3){
+							
+							result={
+							liveData:post1,
+							avgTempData:post2,
+							avgHourlyData:post3
+						}
+							console.log(result);
+							res.json(result);
+							
+							
+						});		
+							
+					
+					
+					
+					
+					
+					
+				});		
 					
 				});
 			
@@ -83,42 +133,62 @@ app.get("/ajax-info2",(req,res)=>{
 });
 
 app.listen(port, () => {
+  
   console.log(`Example app listening at http://localhost:${port}`);
-  avgWeeklyTemp();
-  // avgTemp(new Date("2020-08-10"),new Date("2020-08-09"));
-  // for(index=1;index<7;index++){
-	  
-  // }
+  
+  avgHourlyTemp();
+  
 });
 
 
-function avgWeeklyTemp(){
+function avgHourlyTemp(){
+		
 	
 	SensorData.aggregate([
-		{
-		'$group':
+			{	
+				
+				'$match':{
+					"dateCreated" : { 
+						$lt: new Date(), 
+						$gte: new Date(new Date().setDate(new Date().getDate()-1))
+					
+				}}
+			},
+				
+				
 			{
-				'_id': { $dateToString: { format: "%Y-%m-%d", date: "$dateCreated" } },
-				'avgTemp': {$avg: '$temperature'}
+				'$group':
+					{
+						// '_id': {$hour:'$dateCreated' },
+						_id: {$dateToString: { format: "%Y-%m-%dT%H", date: "$dateCreated" } },
+						'avgTemp': {$avg: '$temperature'},
+					
+						
+					
+					}
 			}
+			,
+				
+				
+				{ '$sort' : { _id: -1 } },
+				
+				// {
+					// '$project':
+					// {
+						// '_id':'$dateCreated',
+						// 'avgTemp':1
+					// }
+				// }
+				],
+				
+				function(err,result){
+					
+					console.log(result);
+					
+					
+				});		
+					
 
-		},
-		
-		{ $sort : { _id: -1 } },
-		{$limit:7},
-		{
-			'$project':
-			{
-				't':Date.parse('$_id'),
-				'_id':0,
-				'avgTemp':1
-			}
-		}
-		],
-		
-		function(err,post){
-			console.log(post);
-		})			
 	
 	}
 

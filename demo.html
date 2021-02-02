@@ -49,6 +49,14 @@
 							</div>
 						</div>
 				</div>
+				<div class="col">
+						<div class="card">	
+							<div class="card-header font-weight-bold">Last 24 hours Average Temperature Data</div>
+							<div class="card-body">
+								<canvas id="myChart2" width="200" height="200"></canvas>
+							</div>
+						</div>
+				</div>
 		</div>
 	</div>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.bundle.js" 
@@ -78,15 +86,27 @@
 					document.getElementById("soot").innerHTML=jsonObj.liveData.soot;
 					dateData=[];
 					tempData=[];
+					dateData2=[];
+					tempData2=[];
+					
+					
 					for(i=0;i<jsonObj.avgTempData.length;i++){
 						dateData.push(jsonObj.avgTempData[i]["t"]);
 						tempData.push(jsonObj.avgTempData[i]["avgTemp"]);
+						
+					}
+					
+					for(i=0;i<jsonObj.avgHourlyData.length;i++){
+						dateData2.push(jsonObj.avgHourlyData[i]["_id"]);
+						tempData2.push(jsonObj.avgHourlyData[i]["avgTemp"]);
 						
 					}
 					console.log(dateData);
 					console.log(tempData);
 					
 					var ctx = document.getElementById('myChart').getContext('2d');
+					var ctx2 = document.getElementById('myChart2').getContext('2d');
+					
 					var myChart = new Chart(ctx, {
 					type: 'bar',
 					data: {
@@ -125,6 +145,30 @@
 							}]
 						}
 					}
+				});
+				
+				var myChart2 = new Chart(ctx2, {
+					type: 'bar',
+					data: {
+						labels: dateData2,
+						datasets: [{
+							label: 'Average Hourly Temperature',
+							data: tempData2,
+							
+							<!-- borderWidth: 1 -->
+						}]
+					},
+					
+					options: {
+						scales: {
+							yAxes: [{
+								ticks: {
+									beginAtZero: false
+								}
+							}]
+						}
+					}
+					
 				});
 		
 			

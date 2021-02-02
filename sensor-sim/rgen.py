@@ -11,13 +11,13 @@ mydb = myclient.my_database
 mycol = mydb.sensordatas
 
 def create_sensor_data(fake):
-    datentime=datetime(2020,8,1)
-    # datentime=datetime.now()
+    #datentime=datetime(2020,8,1)
+    datentime=datetime.now()
     
     for i in range(15):
-        for j in range(24):   
+        for j in range(48):   
             # datentime += timedelta(days=1)
-            datentime+=timedelta(hours=1)
+            datentime-=timedelta(hours=0.5)
             sootData = Decimal128( str(fake.pyfloat(left_digits=3, right_digits=3, positive=False, min_value=0, max_value=999)))
             sootData= Decimal128(str(sootData))
             tempData = fake.random_int(-40,85)
