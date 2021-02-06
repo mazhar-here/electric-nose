@@ -36,94 +36,25 @@ app.get('/day-form', (req, res) => {
 
 app.get("/ajax-info",(req,res)=>{	
 
-	
-		SensorData.findOne({}, {}, { sort: { 'dateCreated' : -1 } }, function(err, post1) {
-	
-			SensorData.aggregate([
-			{	
-				'$group':
-					{
-						'_id': { $dateToString: { format: "%Y-%m-%d", date: "$dateCreated" } },
-						'avgTemp': {$avg: '$temperature'}
-					}
-
-				},
-				
-				{ $sort : { _id: -1 } },
-				{$limit:7},
-				{
-					'$project':
-					{
-						't':'$_id',
-						'_id':0,
-						'avgTemp':1
-					}
-				}
-				],
-				
-				function(err,post2){
-					
-					SensorData.aggregate([
-					{	
-						
-						'$match':{
-							"dateCreated" : { 
-								$lt: new Date(), 
-								$gte: new Date(new Date().setDate(new Date().getDate()-1))
-							
-						}}
-					},
-						
-						
-					{
-						'$group':
-							{
-								// '_id': {$hour:'$dateCreated' },
-								_id: {$dateToString: { format: "%Y-%m-%dT%H", date: "$dateCreated" } },
-								'avgTemp': {$avg: '$temperature'},
-							
-								
-							
-							}
-					}
-					,
-						
-						
-						{ '$sort' : { _id: -1 } },
-						
-						// {
-							// '$project':
-							// {
-								// '_id':'$dateCreated',
-								// 'avgTemp':1
-							// }
-						// }
-						],
-						
-						function(err,post3){
-							
-							result={
-							liveData:post1,
-							avgTempData:post2,
-							avgHourlyData:post3
+	liveData().then((liveResult)=>{
+		avgHourlyData('temperature').then((hourlyResult)=>{
+			avgWeeklyData('temperature').then((weeklyResult)=>{
+				result={
+							liveData:liveResult,
+							avgWeeklyData:weeklyResult,
+							avgHourlyData:hourlyResult
 						}
 							console.log(result);
 							res.json(result);
+			});
+		});
+	});
+	
+	
+	
+
 							
-							
-						});		
-							
-					
-					
-					
-					
-					
-					
-				});		
-					
-				});
-			
-		
+												
 });
 
 app.get("/ajax-info2",(req,res)=>{
@@ -136,15 +67,15 @@ app.listen(port, () => {
   
   console.log(`Example app listening at http://localhost:${port}`);
   
-  avgHourlyTemp();
+  // avgHourlyTemp();
   
 });
 
 
-function avgHourlyTemp(){
+function avgHourlyData(sensor){
 		
 	
-	SensorData.aggregate([
+	return SensorData.aggregate([
 			{	
 				
 				'$match':{
@@ -159,39 +90,56 @@ function avgHourlyTemp(){
 			{
 				'$group':
 					{
-						// '_id': {$hour:'$dateCreated' },
+						
 						_id: {$dateToString: { format: "%Y-%m-%dT%H", date: "$dateCreated" } },
-						'avgTemp': {$avg: '$temperature'},
+						'avgResult': {$avg: '$'+sensor},
 					
 						
 					
 					}
 			}
-			,
-				
-				
+			,			
 				{ '$sort' : { _id: -1 } },
 				
-				// {
-					// '$project':
-					// {
-						// '_id':'$dateCreated',
-						// 'avgTemp':1
-					// }
-				// }
-				],
-				
-				function(err,result){
-					
-					console.log(result);
-					
-					
-				});		
-					
-
-	
+		
+				]).exec();
+		
+		// return post;
 	}
 
+function liveData(){
+		
+	
+	return SensorData.findOne({}, {}, { sort: { 'dateCreated' : -1 } }).exec();
+	
+	
+}
+
+function avgWeeklyData(sensor){
+		
+	
+	return SensorData.aggregate([
+			{	
+				'$group':
+					{
+						'_id': { $dateToString: { format: "%Y-%m-%d", date: "$dateCreated" } },
+						'avgResult': {$avg: '$'+sensor}
+					}
+
+				},
+				
+				{ $sort : { _id: -1 } },
+				{$limit:7},
+				{
+					'$project':
+					{
+						't':'$_id',
+						'_id':0,
+						'avgResult':1
+					}
+				}
+				]).exec();
+	}
 
 	
 
