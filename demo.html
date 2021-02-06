@@ -84,92 +84,10 @@
 					document.getElementById("hum").innerHTML=jsonObj.liveData.humidity;
 					document.getElementById("press").innerHTML=jsonObj.liveData.pressure;
 					document.getElementById("soot").innerHTML=jsonObj.liveData.soot;
-					dateData=[];
-					tempData=[];
-					dateData2=[];
-					tempData2=[];
-					
-					
-					for(i=0;i<jsonObj.avgTempData.length;i++){
-						dateData.push(jsonObj.avgTempData[i]["t"]);
-						tempData.push(jsonObj.avgTempData[i]["avgTemp"]);
-						
-					}
-					
-					for(i=0;i<jsonObj.avgHourlyData.length;i++){
-						dateData2.push(jsonObj.avgHourlyData[i]["_id"]);
-						tempData2.push(jsonObj.avgHourlyData[i]["avgTemp"]);
-						
-					}
-					console.log(dateData);
-					console.log(tempData);
-					
-					var ctx = document.getElementById('myChart').getContext('2d');
-					var ctx2 = document.getElementById('myChart2').getContext('2d');
-					
-					var myChart = new Chart(ctx, {
-					type: 'bar',
-					data: {
-						labels: dateData,
-						datasets: [{
-							label: 'Average Daily Temperature',
-							data: tempData,
-						
-							backgroundColor: [
-								'rgba(255, 99, 132, 0.6)',
-								'rgba(54, 162, 235, 0.6)',
-								'rgba(255, 206, 86, 0.6)',
-								'rgba(75, 192, 192, 0.6)',
-								'rgba(153, 102, 255, 0.6)',
-								'rgba(255, 159, 64, 0.6)',
-								'rgba(255, 99, 132, 0.6)'
-							],
-							borderColor: [
-								'rgba(255, 99, 132, 1)',
-								'rgba(54, 162, 235, 1)',
-								'rgba(255, 206, 86, 1)',
-								'rgba(75, 192, 192, 1)',
-								'rgba(153, 102, 255, 1)',
-								'rgba(255, 159, 64, 1)',
-								'rgba(255, 99, 132, 1)'
-							],
-							borderWidth: 1
-						}]
-					},
-					options: {
-						scales: {
-							yAxes: [{
-								ticks: {
-									beginAtZero: true
-								}
-							}]
-						}
-					}
-				});
-				
-				var myChart2 = new Chart(ctx2, {
-					type: 'bar',
-					data: {
-						labels: dateData2,
-						datasets: [{
-							label: 'Average Hourly Temperature',
-							data: tempData2,
-							
-							<!-- borderWidth: 1 -->
-						}]
-					},
-					
-					options: {
-						scales: {
-							yAxes: [{
-								ticks: {
-									beginAtZero: false
-								}
-							}]
-						}
-					}
-					
-				});
+	
+					myChart=ShowWeeklyChart('myChart',jsonObj);
+					myChart2=ShowHourlyChart('myChart2',jsonObj);
+			
 		
 			
 					
@@ -202,7 +120,103 @@
 			xhttp.send(null);
 		}
 		
-	
+		function ShowWeeklyChart(chartId,jsonObj){
+			
+			dateData=[];
+			avgData=[];
+					
+			for(i=0;i<jsonObj.avgWeeklyData.length;i++){
+						
+						dateData.push(jsonObj.avgWeeklyData[i]["t"]);
+						avgData.push(jsonObj.avgWeeklyData[i]["avgResult"]);
+						
+			}		
+			
+			var myChart = new Chart(document.getElementById(chartId).getContext('2d'), {
+					type: 'bar',
+					data: {
+						labels: dateData,
+						datasets: [{
+							label: 'Average Daily Data',
+							data: avgData,
+						
+							backgroundColor: [
+								'rgba(255, 99, 132, 0.6)',
+								'rgba(54, 162, 235, 0.6)',
+								'rgba(255, 206, 86, 0.6)',
+								'rgba(75, 192, 192, 0.6)',
+								'rgba(153, 102, 255, 0.6)',
+								'rgba(255, 159, 64, 0.6)',
+								'rgba(255, 99, 132, 0.6)'
+							],
+							borderColor: [
+								'rgba(255, 99, 132, 1)',
+								'rgba(54, 162, 235, 1)',
+								'rgba(255, 206, 86, 1)',
+								'rgba(75, 192, 192, 1)',
+								'rgba(153, 102, 255, 1)',
+								'rgba(255, 159, 64, 1)',
+								'rgba(255, 99, 132, 1)'
+							],
+							borderWidth: 1
+						}]
+					},
+					options: {
+						scales: {
+							yAxes: [{
+								ticks: {
+									beginAtZero: true
+								}
+							}]
+						}
+					}
+			});
+				
+			return myChart;	
+
+		}
+		
+		function ShowHourlyChart(chartId,jsonObj){
+		
+			dateData=[];
+			avgData=[];
+			
+			for(i=0;i<jsonObj.avgHourlyData.length;i++){
+						dateData.push(jsonObj.avgHourlyData[i]["_id"]);
+						avgData.push(jsonObj.avgHourlyData[i]["avgResult"]);
+						
+			}
+			
+			var myChart = new Chart(document.getElementById(chartId).getContext('2d'), {
+					type: 'bar',
+					data: {
+						labels: dateData,
+						datasets: [{
+							backgroundColor: 'rgba(255, 0, 0, 0.5)',
+							label: 'Average Hourly Temperature',
+							data: avgData,
+							
+							<!-- borderWidth: 1 -->
+						}]
+					},
+					
+					options: {
+						scales: {
+							yAxes: [{
+								ticks: {
+									beginAtZero: false
+								}
+							}]
+						}
+					}
+					
+				});
+			
+			return myChart;
+		
+		
+		
+		}
 		
 	
 		</script>
