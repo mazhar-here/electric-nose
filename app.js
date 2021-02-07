@@ -28,11 +28,103 @@ app.get('/', (req, res) => {
 	
 });
 
-app.get('/day-form', (req, res) => {
-	SensorData.find({day:req.query["day-select"]},(error,result)=>{
-			 res.render('result',{result});
-			 console.log(result);
-})});
+app.get('/week-pressure', (req, res) => {
+	
+	avgWeeklyData('pressure').then((weeklyResult)=>{
+		console.log(weeklyResult);
+		res.json({
+		
+			avgWeeklyData:weeklyResult});
+		
+	});
+	
+	});
+	
+app.get('/week-temperature', (req, res) => {
+	
+	avgWeeklyData('temperature').then((weeklyResult)=>{
+		console.log(weeklyResult);
+		res.json({
+		
+			avgWeeklyData:weeklyResult});
+		
+	});
+	
+	});
+
+app.get('/week-soot', (req, res) => {
+	
+	avgWeeklyData('soot').then((weeklyResult)=>{
+		console.log(weeklyResult);
+		res.json({
+		
+			avgWeeklyData:weeklyResult});
+		
+	});
+	
+	});
+
+app.get('/week-humidity', (req, res) => {
+	
+	avgWeeklyData('humidity').then((weeklyResult)=>{
+		console.log(weeklyResult);
+		res.json({
+		
+			avgWeeklyData:weeklyResult});
+		
+	});
+	
+	});	
+	
+	
+app.get('/hour-pressure', (req, res) => {
+	
+	avgHourlyData('pressure').then((hourlyResult)=>{
+		console.log(hourlyResult);
+		res.json({
+		
+			avgHourlyData:hourlyResult});
+		
+	});
+	
+	});
+
+app.get('/hour-temperature', (req, res) => {
+	
+	avgHourlyData('temperature').then((hourlyResult)=>{
+		console.log(hourlyResult);
+		res.json({
+		
+			avgHourlyData:hourlyResult});
+		
+	});
+	
+	});
+
+app.get('/hour-soot', (req, res) => {
+	
+	avgHourlyData('soot').then((hourlyResult)=>{
+		console.log(hourlyResult);
+		res.json({
+		
+			avgHourlyData:hourlyResult});
+		
+	});
+	
+	});
+	
+app.get('/hour-humidity', (req, res) => {
+	
+	avgHourlyData('humidity').then((hourlyResult)=>{
+		console.log(hourlyResult);
+		res.json({
+		
+			avgHourlyData:hourlyResult});
+		
+	});
+	
+	});
+
 
 app.get("/ajax-info",(req,res)=>{	
 
