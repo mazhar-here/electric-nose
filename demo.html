@@ -43,17 +43,37 @@
 				</div>
 				<div class="col">
 						<div class="card">	
-							<div class="card-header font-weight-bold">Last 7 Days Average Temperature Data</div>
+							<div class="card-header font-weight-bold">Last 7 Days Average Sensor Data</div>
 							<div class="card-body">
-								<canvas id="myChart" width="200" height="200"></canvas>
+								
+								<div class="btn-group" role="group" aria-label="Basic example">
+								  <button type="button" class="btn btn-dark btn-sm" onclick="loadWeeklyData('temperature')">Temperature</button>
+								  <button type="button" class="btn btn-dark btn-sm" onclick="loadWeeklyData('pressure')">Pressure</button>
+								  <button type="button" class="btn btn-dark btn-sm" onclick="loadWeeklyData('humidity')">Humidity</button>
+								  <button type="button" class="btn btn-dark btn-sm" onclick="loadWeeklyData('soot')">Soot</button>
+								</div>
+								<hr>
+								<div id="week-chart-container">
+									<canvas id="myChart" width="200" height="200"></canvas>
+								</div>
 							</div>
+							
 						</div>
 				</div>
 				<div class="col">
 						<div class="card">	
-							<div class="card-header font-weight-bold">Last 24 hours Average Temperature Data</div>
+							<div class="card-header font-weight-bold">Last 24 hours Average Sensor Data</div>
 							<div class="card-body">
-								<canvas id="myChart2" width="200" height="200"></canvas>
+								<div class="btn-group" role="group" aria-label="Basic example">
+								  <button type="button" class="btn btn-dark btn-sm" onclick="loadHourlyData('temperature')">Temperature</button>
+								  <button type="button" class="btn btn-dark btn-sm" onclick="loadHourlyData('pressure')">Pressure</button>
+								  <button type="button" class="btn btn-dark btn-sm" onclick="loadHourlyData('humidity')">Humidity</button>
+								  <button type="button" class="btn btn-dark btn-sm" onclick="loadHourlyData('soot')">Soot</button>
+								</div>
+								<hr>
+								<div id="hour-chart-container">
+									<canvas id="myChart2" width="400" height="300"></canvas>
+								</div>
 							</div>
 						</div>
 				</div>
@@ -88,10 +108,61 @@
 					myChart=ShowWeeklyChart('myChart',jsonObj);
 					myChart2=ShowHourlyChart('myChart2',jsonObj);
 			
-		
+							
+					}
+				}
 			
+			
+			
+			xhttp.send(null);
+		}
+		
+		function loadWeeklyData(sensor){
+			var xhttp=new XMLHttpRequest();
+			
+			xhttp.open("GET",'/week-'+sensor,true);
+			xhttp.onreadystatechange=function(){
+				if(this.readyState==4 && this.status==200){
+					var jsonObj=JSON.parse(this.responseText);
 					
+					document.getElementById( "myChart" ).remove();    
+					let canvas = document.createElement('canvas'); 
+					canvas.setAttribute('id','myChart');
+					document.getElementById('week-chart-container').appendChild(canvas);
+					canvas.setAttribute('width','200');     
+					canvas.setAttribute('height','200');
 					
+					myChart=ShowWeeklyChart('myChart',jsonObj);
+					
+			
+							
+					}
+				}
+			
+			
+			
+			xhttp.send(null);
+		}
+		
+		function loadHourlyData(sensor){
+			var xhttp=new XMLHttpRequest();
+			
+			xhttp.open("GET",'/hour-'+sensor,true);
+			xhttp.onreadystatechange=function(){
+				if(this.readyState==4 && this.status==200){
+					var jsonObj=JSON.parse(this.responseText);
+					
+					document.getElementById( "myChart2" ).remove();    
+					let canvas = document.createElement('canvas'); 
+					canvas.setAttribute('id','myChart2');
+					document.getElementById('hour-chart-container').appendChild(canvas);
+					canvas.setAttribute('width','400');     
+					canvas.setAttribute('height','300');
+					
+					myChart=ShowHourlyChart('myChart2',jsonObj);
+					
+			
+							
 					}
 				}
 			
@@ -132,6 +203,7 @@
 						
 			}		
 			
+			<!-- var myChart = new Chart(document.getElementById(chartId).getContext('2d'),{ type: 'bar', data: barData, options: barOptions }).destroy(); -->
 			var myChart = new Chart(document.getElementById(chartId).getContext('2d'), {
 					type: 'bar',
 					data: {
@@ -193,7 +265,7 @@
 						labels: dateData,
 						datasets: [{
 							backgroundColor: 'rgba(255, 0, 0, 0.5)',
-							label: 'Average Hourly Temperature',
+							label: 'Average Hourly Data',
 							data: avgData,
 							
 							<!-- borderWidth: 1 -->
