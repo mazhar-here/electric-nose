@@ -24,18 +24,18 @@
 							<div class="card-body">
 								<div class="row">
 									<div class="col">
-										<p class="card-text">Temperature: </p>
-										<p class="card-text">Humidity: </p>
-										<p class="card-text">Air Pressure: </p>
-										<p class="card-text">Soot: </p>
-										<button class="btn btn-dark" onclick="loadSensorData()">Reload</button>
+										<p class="card-text">Temperature(°C): </p>
+										<p class="card-text">Humidity(%): </p>
+										<p class="card-text">Air Pressure(hPa): </p>
+										<p class="card-text">Soot(μg/m3): </p>
+										<p class="card-text">Last Updated: </p>	
 									</div>
 									<div class="col">
 										<p class="card-text" id="temp"></p>
 										<p class="card-text" id="hum"></p>
 										<p class="card-text" id="press"></p>
 										<p class="card-text" id="soot"></p>
-										
+										<p class="card-text" id="time"></p>
 									</div>
 								</div>	
 							</div>
@@ -72,7 +72,7 @@
 								</div>
 								<hr>
 								<div id="hour-chart-container">
-									<canvas id="myChart2" width="400" height="300"></canvas>
+									<canvas id="myChart2" width="300" height="300"></canvas>
 								</div>
 							</div>
 						</div>
@@ -95,26 +95,35 @@
 		
 		
 		function loadDoc(){
-			var xhttp=new XMLHttpRequest();
-			xhttp.open("GET","/ajax-info",true);
-			xhttp.onreadystatechange=function(){
-				if(this.readyState==4 && this.status==200){
-					var jsonObj=JSON.parse(this.responseText);
-					document.getElementById("temp").innerHTML=jsonObj.liveData.temperature;
-					document.getElementById("hum").innerHTML=jsonObj.liveData.humidity;
-					document.getElementById("press").innerHTML=jsonObj.liveData.pressure;
-					document.getElementById("soot").innerHTML=jsonObj.liveData.soot;
+			<!-- var xhttp=new XMLHttpRequest(); -->
+			<!-- xhttp.open("GET","/ajax-info",true); -->
+			<!-- xhttp.onreadystatechange=function(){ -->
+				<!-- if(this.readyState==4 && this.status==200){ -->
+					<!-- var jsonObj=JSON.parse(this.responseText); -->
+					
+					
+					
+					<!-- let current_datetime = new Date(); -->
+					<!-- let formatted_date = current_datetime.getFullYear() + "-" + (current_datetime.getMonth() + 1) + "-"  -->
+					<!-- + current_datetime.getDate() + " " + current_datetime.getHours() + ":"  -->
+					<!-- + current_datetime.getMinutes() + ":" + current_datetime.getSeconds();  -->
+					<!-- document.getElementById("time").innerHTML=formatted_date; -->
 	
-					myChart=ShowWeeklyChart('myChart',jsonObj);
-					myChart2=ShowHourlyChart('myChart2',jsonObj);
+					<!-- myChart=ShowWeeklyChart('myChart',jsonObj); -->
+					<!-- myChart2=ShowHourlyChart('myChart2',jsonObj); -->
 			
 							
-					}
-				}
+					<!-- } -->
+				<!-- } -->
 			
 			
 			
-			xhttp.send(null);
+			<!-- xhttp.send(null); -->
+			
+			loadSensorData();
+			loadWeeklyData('temperature');
+			loadHourlyData('temperature');
+			
 		}
 		
 		function loadWeeklyData(sensor){
@@ -156,7 +165,7 @@
 					let canvas = document.createElement('canvas'); 
 					canvas.setAttribute('id','myChart2');
 					document.getElementById('hour-chart-container').appendChild(canvas);
-					canvas.setAttribute('width','400');     
+					canvas.setAttribute('width','300');     
 					canvas.setAttribute('height','300');
 					
 					myChart=ShowHourlyChart('myChart2',jsonObj);
@@ -177,11 +186,88 @@
 			xhttp.onreadystatechange=function(){
 				if(this.readyState==4 && this.status==200){
 					var jsonObj=JSON.parse(this.responseText);
-					document.getElementById("temp").innerHTML=jsonObj.liveData.temperature;
-					document.getElementById("hum").innerHTML=jsonObj.liveData.humidity;
-					document.getElementById("press").innerHTML=jsonObj.liveData.pressure;
-					document.getElementById("soot").innerHTML=jsonObj.liveData.soot;
 					
+					temp=document.getElementById("temp");
+					hum=document.getElementById("hum");
+					press=document.getElementById("press");
+					soot=document.getElementById("soot");
+				
+					<!-- jsonObj.liveData.soot=9; -->
+					temp.innerHTML=jsonObj.liveData.temperature;
+					hum.innerHTML=jsonObj.liveData.humidity;
+					press.innerHTML=jsonObj.liveData.pressure;
+					soot.innerHTML=jsonObj.liveData.soot;
+					
+					//temperature range
+					if(jsonObj.liveData.temperature<10 || jsonObj.liveData.temperature>26){
+						temp.setAttribute('style','color:red');
+					}
+					
+					else if(jsonObj.liveData.temperature>=10 && jsonObj.liveData.temperature <=15){
+						
+						temp.setAttribute('style','color:black');
+					}
+					
+					
+					else{
+						
+						temp.setAttribute('style','color:green');
+					}
+					
+					//pressure range	
+					if(jsonObj.liveData.pressure<900 || jsonObj.liveData.pressure>1020){
+						press.setAttribute('style','color:red');
+					}
+					
+					else if(jsonObj.liveData.pressure>=900 && jsonObj.liveData.pressure <1000){
+						
+						press.setAttribute('style','color:black');
+					}
+					
+					
+					else{
+						
+						press.setAttribute('style','color:green');
+					}
+					
+					//humidity range
+					if(jsonObj.liveData.humidity<30 || jsonObj.liveData.humidity>50){
+						hum.setAttribute('style','color:red');
+					}
+					
+					else if(jsonObj.liveData.humidity>=30 && jsonObj.liveData.humidity <=40){
+						
+						hum.setAttribute('style','color:black');
+					}
+					
+					
+					else{
+						
+						hum.setAttribute('style','color:green');
+					}
+					
+					//soot range
+					if(jsonObj.liveData.soot > 15){
+						soot.setAttribute('style','color:red');
+					}
+					
+					else if(jsonObj.liveData.soot>10 && jsonObj.liveData.soot <=15){
+						
+						soot.setAttribute('style','color:black');
+					}
+					
+					
+					else{
+						
+						soot.setAttribute('style','color:green');
+					}
+					
+					//format last updated date in the live readings card
+					let current_datetime = new Date();
+					let formatted_date = current_datetime.getFullYear() + "-" + (current_datetime.getMonth() + 1) + "-" 
+					+ current_datetime.getDate() + " " + current_datetime.getHours() + ":" 
+					+ current_datetime.getMinutes() + ":" + current_datetime.getSeconds(); 
+					document.getElementById("time").innerHTML=formatted_date;
 					
 				}
 			}
@@ -203,7 +289,6 @@
 						
 			}		
 			
-			<!-- var myChart = new Chart(document.getElementById(chartId).getContext('2d'),{ type: 'bar', data: barData, options: barOptions }).destroy(); -->
 			var myChart = new Chart(document.getElementById(chartId).getContext('2d'), {
 					type: 'bar',
 					data: {
@@ -237,7 +322,7 @@
 						scales: {
 							yAxes: [{
 								ticks: {
-									beginAtZero: true
+									beginAtZero: false
 								}
 							}]
 						}
@@ -289,6 +374,14 @@
 		
 		
 		}
+		
+		setInterval(function(){
+				
+				loadSensorData();
+
+		}, 2000);
+		
+		
 		
 	
 		</script>
