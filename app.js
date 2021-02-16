@@ -1,11 +1,15 @@
+//Loads all the required libraries
 const express = require('express');
 const mongoose=require('mongoose');
 const path=require('path');
 const ejs=require('ejs');
 
+
 mongoose.connect('mongodb://localhost/my_database', {useNewUrlParser: true});
 const app = express();
 const port = 3000;
+
+//Defines a Schema. Schema is required by mongoose to set up the format of the data in the database
 const Schema=mongoose.Schema;
 const SensorDataSchema=new Schema({
 	
@@ -17,18 +21,22 @@ const SensorDataSchema=new Schema({
 	});
 const SensorData=mongoose.model('SensorData',SensorDataSchema);
 
-
+//We tell Express to use EJS as our templating engine
 app.set('view engine','ejs');
+// Sets the the static file directory as "public"
 app.use(express.static('public'));
 
+//Sets the main file to serve when we go to the homepage
 app.get('/', (req, res) => {
 	
 
-	res.sendFile(path.resolve(__dirname,"demo.html"));
+	res.sendFile(path.resolve(__dirname,"index.html"));
 	
 });
 
+//Sets end point for weekly pressure data
 app.get('/week-pressure', (req, res) => {
+	
 	
 	avgWeeklyData('pressure').then((weeklyResult)=>{
 		console.log(weeklyResult);
@@ -40,6 +48,8 @@ app.get('/week-pressure', (req, res) => {
 	
 	});
 	
+	
+//Sets end point for weekly temperature data	
 app.get('/week-temperature', (req, res) => {
 	
 	avgWeeklyData('temperature').then((weeklyResult)=>{
@@ -52,6 +62,7 @@ app.get('/week-temperature', (req, res) => {
 	
 	});
 
+//Sets end point for weekly soot data
 app.get('/week-soot', (req, res) => {
 	
 	avgWeeklyData('soot').then((weeklyResult)=>{
@@ -64,6 +75,7 @@ app.get('/week-soot', (req, res) => {
 	
 	});
 
+//Sets end point for weekly humidity data
 app.get('/week-humidity', (req, res) => {
 	
 	avgWeeklyData('humidity').then((weeklyResult)=>{
@@ -76,7 +88,7 @@ app.get('/week-humidity', (req, res) => {
 	
 	});	
 	
-	
+//Sets end point for hourly pressure data	
 app.get('/hour-pressure', (req, res) => {
 	
 	avgHourlyData('pressure').then((hourlyResult)=>{
@@ -89,6 +101,7 @@ app.get('/hour-pressure', (req, res) => {
 	
 	});
 
+//Sets end point for hourly temperature data
 app.get('/hour-temperature', (req, res) => {
 	
 	avgHourlyData('temperature').then((hourlyResult)=>{
@@ -100,7 +113,9 @@ app.get('/hour-temperature', (req, res) => {
 	});
 	
 	});
-
+	
+	
+//Sets end point for hourly soot data
 app.get('/hour-soot', (req, res) => {
 	
 	avgHourlyData('soot').then((hourlyResult)=>{
@@ -113,6 +128,8 @@ app.get('/hour-soot', (req, res) => {
 	
 	});
 	
+	
+//Sets end point for hourly humidity data	
 app.get('/hour-humidity', (req, res) => {
 	
 	avgHourlyData('humidity').then((hourlyResult)=>{
@@ -141,29 +158,24 @@ app.get("/ajax-info",(req,res)=>{
 			});
 		});
 	});
-	
-	
-	
-
-							
-												
+													
 });
 
 app.get("/ajax-info2",(req,res)=>{
-	//res.sendFile(path.resolve(__dirname,"public/new.txt"));
+	
 	res.json();
 	
 });
 
 app.listen(port, () => {
   
-  console.log(`Example app listening at http://localhost:${port}`);
+  console.log(`Server listening at http://localhost:${port}`);
   
-  // avgHourlyTemp();
+  
   
 });
 
-
+//Aggregates the average hourly data from the database
 function avgHourlyData(sensor){
 		
 	
@@ -207,6 +219,7 @@ function liveData(){
 	
 }
 
+//Aggregates the average weekly data from the database
 function avgWeeklyData(sensor){
 		
 	

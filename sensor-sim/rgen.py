@@ -5,27 +5,31 @@ from datetime import datetime
 from datetime import timedelta
 from random import random
 
+#connects to the local database at port 27017
 myclient = MongoClient('localhost',27017)
+
+#assigns the stored database and sensordatas collection to mydb and mycol variables  
 mydb = myclient.my_database
 mycol = mydb.sensordatas
 
 def create_sensor_data(fake):
-    #datentime=datetime(2020,8,1)
-    # datentime=datetime.now()
     
-    # for i in range(15):
-        # for j in range(48):   
     while True:        
-            # datentime += timedelta(days=1)
-            # datentime-=timedelta(hours=0.5)
+        
+        #gets the current time
         datentime=datetime.now()
+       
+        #generates random sensor data
         sootData=random()*1000
         sootData=float("{0:.2f}".format(sootData))
         tempData = fake.random_int(-40,85)
         humidityData = fake.random_int(0,100)
         pressureData = fake.random_int(300,1250)
+        
+        
         print(sootData)
         
+        #puts the random data into the database
         result = mycol.insert_one( 
             {
                 
@@ -37,7 +41,8 @@ def create_sensor_data(fake):
                 }
             )
         
-        time.sleep(3)
+        #sleeps for 5 seconds before restarting the loop
+        time.sleep(5)
         
            
         

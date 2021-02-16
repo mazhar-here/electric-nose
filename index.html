@@ -9,6 +9,7 @@
 			crossorigin="anonymous">
 	</head>
 	<body>
+		<!-- Shows the top navigation bar -->
 		<nav class="navbar navbar-expand-sm bg-dark justify-content-center">
 			<ul class="navbar-nav">
 				<li>
@@ -16,9 +17,13 @@
 				</li>
 			</ul>
 		</nav>
+		
+		<!-- Defines the container the row/column layout -->
 		<div class="container pt-3">
 			<div class="row">
 				<div class="col">
+				
+						<!-- Card for live readings -->
 						<div class="card">	
 							<div class="card-header font-weight-bold">Current Sensor Readings</div>
 							<div class="card-body">
@@ -41,7 +46,10 @@
 							</div>
 						</div>
 				</div>
+				
+				<!-- Card for weekly chart -->
 				<div class="col">
+											
 						<div class="card">	
 							<div class="card-header font-weight-bold">Last 7 Days Average Sensor Data</div>
 							<div class="card-body">
@@ -60,6 +68,8 @@
 							
 						</div>
 				</div>
+
+				<!-- Card for hourly chart -->
 				<div class="col">
 						<div class="card">	
 							<div class="card-header font-weight-bold">Last 24 hours Average Sensor Data</div>
@@ -91,34 +101,12 @@
 			
 			
 		<script>
+		
+		<!-- Loads all three cards on first page load or reload -->
 		window.onload=loadDoc;
 		
 		
 		function loadDoc(){
-			<!-- var xhttp=new XMLHttpRequest(); -->
-			<!-- xhttp.open("GET","/ajax-info",true); -->
-			<!-- xhttp.onreadystatechange=function(){ -->
-				<!-- if(this.readyState==4 && this.status==200){ -->
-					<!-- var jsonObj=JSON.parse(this.responseText); -->
-					
-					
-					
-					<!-- let current_datetime = new Date(); -->
-					<!-- let formatted_date = current_datetime.getFullYear() + "-" + (current_datetime.getMonth() + 1) + "-"  -->
-					<!-- + current_datetime.getDate() + " " + current_datetime.getHours() + ":"  -->
-					<!-- + current_datetime.getMinutes() + ":" + current_datetime.getSeconds();  -->
-					<!-- document.getElementById("time").innerHTML=formatted_date; -->
-	
-					<!-- myChart=ShowWeeklyChart('myChart',jsonObj); -->
-					<!-- myChart2=ShowHourlyChart('myChart2',jsonObj); -->
-			
-							
-					<!-- } -->
-				<!-- } -->
-			
-			
-			
-			<!-- xhttp.send(null); -->
 			
 			loadSensorData();
 			loadWeeklyData('temperature');
@@ -126,6 +114,7 @@
 			
 		}
 		
+		<!-- Fetches weekly sensor data using ajax and displays it in the form of chart -->
 		function loadWeeklyData(sensor){
 			var xhttp=new XMLHttpRequest();
 			
@@ -153,6 +142,7 @@
 			xhttp.send(null);
 		}
 		
+		<!-- Fetches hourly sensor data using ajax and displays it in the form of chart -->
 		function loadHourlyData(sensor){
 			var xhttp=new XMLHttpRequest();
 			
@@ -180,6 +170,7 @@
 			xhttp.send(null);
 		}
 		
+		<!-- Fetches the most recent sensor data using ajax and displays it in the live data card -->
 		function loadSensorData(){
 			var xhttp=new XMLHttpRequest();
 			xhttp.open("GET","/ajax-info",true);
@@ -192,21 +183,27 @@
 					press=document.getElementById("press");
 					soot=document.getElementById("soot");
 				
-					<!-- jsonObj.liveData.soot=9; -->
+					<!-- jsonObj.liveData.soot=18; -->
+					<!-- jsonObj.liveData.pressure=1030; -->
+					<!-- jsonObj.liveData.temperature=30; -->
+					<!-- jsonObj.liveData.humidity=65; -->
+					
+					
+					
 					temp.innerHTML=jsonObj.liveData.temperature;
 					hum.innerHTML=jsonObj.liveData.humidity;
 					press.innerHTML=jsonObj.liveData.pressure;
 					soot.innerHTML=jsonObj.liveData.soot;
 					
-					//temperature range
-					if(jsonObj.liveData.temperature<10 || jsonObj.liveData.temperature>26){
+					//changes color of the live readings based upon range defined
+					if(jsonObj.liveData.temperature<22 || jsonObj.liveData.temperature>27){
 						temp.setAttribute('style','color:red');
 					}
 					
-					else if(jsonObj.liveData.temperature>=10 && jsonObj.liveData.temperature <=15){
+					<!-- else if(jsonObj.liveData.temperature>=10 && jsonObj.liveData.temperature <=15){ -->
 						
-						temp.setAttribute('style','color:black');
-					}
+						<!-- temp.setAttribute('style','color:black'); -->
+					<!-- } -->
 					
 					
 					else{
@@ -215,14 +212,14 @@
 					}
 					
 					//pressure range	
-					if(jsonObj.liveData.pressure<900 || jsonObj.liveData.pressure>1020){
+					if(jsonObj.liveData.pressure<1005 || jsonObj.liveData.pressure>1026){
 						press.setAttribute('style','color:red');
 					}
 					
-					else if(jsonObj.liveData.pressure>=900 && jsonObj.liveData.pressure <1000){
+					<!-- else if(jsonObj.liveData.pressure>=900 && jsonObj.liveData.pressure <1000){ -->
 						
-						press.setAttribute('style','color:black');
-					}
+						<!-- press.setAttribute('style','color:black'); -->
+					<!-- } -->
 					
 					
 					else{
@@ -231,14 +228,14 @@
 					}
 					
 					//humidity range
-					if(jsonObj.liveData.humidity<30 || jsonObj.liveData.humidity>50){
+					if(jsonObj.liveData.humidity<50 || jsonObj.liveData.humidity>60){
 						hum.setAttribute('style','color:red');
 					}
 					
-					else if(jsonObj.liveData.humidity>=30 && jsonObj.liveData.humidity <=40){
+					<!-- else if(jsonObj.liveData.humidity>=30 && jsonObj.liveData.humidity <=40){ -->
 						
-						hum.setAttribute('style','color:black');
-					}
+						<!-- hum.setAttribute('style','color:black'); -->
+					<!-- } -->
 					
 					
 					else{
@@ -251,10 +248,10 @@
 						soot.setAttribute('style','color:red');
 					}
 					
-					else if(jsonObj.liveData.soot>10 && jsonObj.liveData.soot <=15){
+					<!-- else if(jsonObj.liveData.soot>10 && jsonObj.liveData.soot <=15){ -->
 						
-						soot.setAttribute('style','color:black');
-					}
+						<!-- soot.setAttribute('style','color:black'); -->
+					<!-- } -->
 					
 					
 					else{
@@ -262,7 +259,7 @@
 						soot.setAttribute('style','color:green');
 					}
 					
-					//format last updated date in the live readings card
+					//formats last updated date in the live readings card
 					let current_datetime = new Date();
 					let formatted_date = current_datetime.getFullYear() + "-" + (current_datetime.getMonth() + 1) + "-" 
 					+ current_datetime.getDate() + " " + current_datetime.getHours() + ":" 
@@ -277,6 +274,7 @@
 			xhttp.send(null);
 		}
 		
+		<!-- Converts the weekly json data into a chart -->
 		function ShowWeeklyChart(chartId,jsonObj){
 			
 			dateData=[];
@@ -333,11 +331,13 @@
 
 		}
 		
+		<!-- Converts the hourly json data into a chart -->
 		function ShowHourlyChart(chartId,jsonObj){
 		
 			dateData=[];
 			avgData=[];
 			
+			<!-- The loop Converts jsonObj into two arrays suitable for chartjs -->
 			for(i=0;i<jsonObj.avgHourlyData.length;i++){
 						dateData.push(jsonObj.avgHourlyData[i]["_id"]);
 						avgData.push(jsonObj.avgHourlyData[i]["avgResult"]);
@@ -352,8 +352,7 @@
 							backgroundColor: 'rgba(255, 0, 0, 0.5)',
 							label: 'Average Hourly Data',
 							data: avgData,
-							
-							<!-- borderWidth: 1 -->
+						
 						}]
 					},
 					
@@ -375,6 +374,7 @@
 		
 		}
 		
+		<!-- Continously sends ajax get requests to update the live data -->
 		setInterval(function(){
 				
 				loadSensorData();
